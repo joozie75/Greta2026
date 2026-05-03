@@ -51,7 +51,7 @@
     #torch-canvas {
       display: block;
       max-width: 100%;
-      height: auto;
+      aspect-ratio: 650 / 780;
     }
 
     .add-name-form {
@@ -140,7 +140,7 @@
       <input type="text" name="name" placeholder="Add a name to the flame..." maxlength="50" required>
       <button type="submit">Add to Flame</button>
     </form>
-    <a href="https://runsignup.com/Race/125939/Donate/QWH2mJ3RnjdY1tjE"
+    <a href="https://runsignup.com/alwaysremember"
        target="_blank" rel="noopener"
        class="donate-link">
       Donate to Support Imagine &rarr;
@@ -277,7 +277,7 @@
     const canvas = document.getElementById('torch-canvas')
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     canvas.width = W * dpr; canvas.height = H * dpr
-    canvas.style.width = W + 'px'; canvas.style.height = H + 'px'
+    canvas.style.width = W + 'px'
     const ctx = canvas.getContext('2d')
     ctx.scale(dpr, dpr)
 
