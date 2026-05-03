@@ -156,7 +156,7 @@
     import { prepareWithSegments, layoutWithLines } from 'https://cdn.jsdelivr.net/npm/@chenglou/pretext@0.0.6/+esm'
 
     const W = 650, H = 780
-    const BODY_FONT = '400 10px Inter', BODY_LH = 13, BODY_TW = 420
+    const BODY_FONT = '400 14px Inter', BODY_LH = 18, BODY_TW = 420
     const FLAME_FONT = '600 12px Inter', FLAME_LH = 16, FLAME_TW = 150
     const BODY_PPS = 15, FLAME_PPS = 25
 
@@ -325,7 +325,7 @@
         if (idx < 0) continue
         const y = i * BODY_LH - bOff
         if (y < -BODY_LH || y > H + BODY_LH) continue
-        let a = 0.12
+        let a = 0.25
         const fz = BODY_LH * 5
         if (y < fz) a *= Math.max(0, y / fz)
         if (y > H - fz) a *= Math.max(0, (H - y) / fz)
