@@ -134,8 +134,10 @@
     <p class="page-title">Greta's Run 5K &amp; Memory Walk</p>
     <p class="page-subtitle">James Ooi &bull; Team Always Remember</p>
     <canvas id="torch-canvas"></canvas>
-    <form class="add-name-form">
-      <input type="text" placeholder="Add a name to the flame..." maxlength="50" required>
+    <form class="add-name-form" name="flame-names" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="flame-names">
+      <input type="hidden" name="bot-field">
+      <input type="text" name="name" placeholder="Add a name to the flame..." maxlength="50" required>
       <button type="submit">Add to Flame</button>
     </form>
     <a href="https://runsignup.com/Race/125939/Donate/QWH2mJ3RnjdY1tjE"
@@ -372,13 +374,18 @@
 
     document.querySelector('.add-name-form').addEventListener('submit', (e) => {
       e.preventDefault()
-      const input = e.target.querySelector('input')
+      const input = e.target.querySelector('input[name="name"]')
       const name = input.value.trim()
       if (name) {
         names.push(name)
         flameLines = buildFlameLines()
         input.value = ''
         flameGlow = 1
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ 'form-name': 'flame-names', name }).toString()
+        }).catch(() => {})
       }
     })
   </script>
