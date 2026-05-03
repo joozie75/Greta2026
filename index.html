@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greta's Run 5K | Run for Imagine</title>
+  <meta name="description" content="James Ooi is running Greta's Run 5K to support Imagine — free grief support for children and families. Add a name to the flame.">
+  <meta property="og:title" content="Greta's Run 5K — Run for Imagine">
+  <meta property="og:description" content="I'm running for Imagine, providing free grief counseling for kids and families. Add a name to the flame.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a1121;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 2rem;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: clamp(0.75rem, 2vw, 0.95rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 209, 102, 0.7);
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+
+    .page-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    #torch-canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .add-name-form {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0.5rem 0 0.5rem;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .add-name-form input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .add-name-form input:focus {
+      border-color: rgba(255, 209, 102, 0.5);
+    }
+
+    .add-name-form input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .add-name-form button {
+      padding: 0.7rem 1.2rem;
+      background: #FF6B35;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .add-name-form button:hover { background: #e85d2a; transform: translateY(-1px); }
+    .add-name-form button:active { transform: translateY(0); }
+
+    .donate-link {
+      display: inline-block;
+      margin: 0.5rem 0;
+      padding: 0.8rem 2rem;
+      background: rgba(255, 107, 53, 0.15);
+      border: 1px solid rgba(255, 107, 53, 0.4);
+      border-radius: 50px;
+      color: #FF6B35;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .donate-link:hover { background: rgba(255, 107, 53, 0.25); transform: translateY(-2px); }
+
+    .footer-text {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.3);
+      text-align: center;
+    }
+
+    .footer-text a {
+      color: rgba(255, 209, 102, 0.6);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="page-title">Greta's Run 5K &amp; Memory Walk</p>
+    <p class="page-subtitle">James Ooi &bull; Team Always Remember</p>
+    <canvas id="torch-canvas"></canvas>
+    <form class="add-name-form">
+      <input type="text" placeholder="Add a name to the flame..." maxlength="50" required>
+      <button type="submit">Add to Flame</button>
+    </form>
+    <a href="https://runsignup.com/Race/125939/Donate/QWH2mJ3RnjdY1tjE"
+       target="_blank" rel="noopener"
+       class="donate-link">
+      Donate to Support Imagine &rarr;
+    </a>
+    <p class="footer-text">
+      Supporting <a href="https://www.imaginenj.org" target="_blank" rel="noopener">Imagine</a>
+      &mdash; free grief support for children &amp; families &bull; Westfield, NJ
+    </p>
+  </main>
+
+  <script type="module">
+    import { prepareWithSegments, layoutWithLines } from 'https://cdn.jsdelivr.net/npm/@chenglou/pretext@0.0.6/+esm'
+
+    const W = 650, H = 780
+    const BODY_FONT = '400 10px Inter', BODY_LH = 13, BODY_TW = 420
+    const FLAME_FONT = '600 12px Inter', FLAME_LH = 16, FLAME_TW = 150
+    const BODY_PPS = 15, FLAME_PPS = 25
+
+    const bodySrc = 'In loving memory of Greta Schoenemann, whose light continues to shine through every step and every mile. Imagine provides free, year-round grief support for children and families coping with loss. Across two centers serving over eighty New Jersey towns, they help transform grief into resilience, empathy, and compassion. Six hundred children and adults find healing each year. Every step matters. Every donation heals. We run so no child grieves alone. In every stride, hope endures. Together we carry their memory forward. Running with purpose. Remembering with love. For Greta. For every family navigating the long road through loss. Step by step, mile by mile, heart by heart. We run together. '
+
+    let names = ['Boon Seng Ooi', 'Yuet Mei Ooi', 'Chih-Ming Yin', 'Evelyn Chao', 'Chih Chao', 'Dorothy Ko']
+
+    await document.fonts.ready
+
+    const bodyPrepared = prepareWithSegments(bodySrc.repeat(30), BODY_FONT)
+    const { lines: bodyLines } = layoutWithLines(bodyPrepared, BODY_TW, BODY_LH)
+
+    function buildFlameLines() {
+      const s = names.map(n => ` ${n} `).join('✧').repeat(25) + ' '
+      const p = prepareWithSegments(s, FLAME_FONT)
+      return layoutWithLines(p, FLAME_TW, FLAME_LH).lines
+    }
+    let flameLines = buildFlameLines()
+
+    // --- Parametric running skeleton ---
+
+    function getPose(time) {
+      const t = time / 420
+      const stride = Math.sin(t)
+      const bob = Math.cos(t * 2) * 5
+
+      const hip = [300, 440 + bob]
+
+      const tA = -Math.PI / 2 + 0.18 + stride * 0.03
+      const shoulder = [hip[0] + Math.cos(tA) * 150, hip[1] + Math.sin(tA) * 150]
+      const head = [shoulder[0] + 14, shoulder[1] - 42]
+
+      // Legs — front knee lifts, back heel kicks
+      const rLA = Math.PI / 2 - stride * 0.6
+      const rKnee = [hip[0] + Math.cos(rLA) * 105, hip[1] + Math.sin(rLA) * 105]
+      const rBehind = Math.max(0, -stride)
+      const rFront = Math.max(0, stride)
+      const rSA = rLA + (0.3 + rFront * 0.35) * (1 - rBehind) + (Math.PI - 1.1) * rBehind
+      const rFoot = [rKnee[0] + Math.cos(rSA) * 92, rKnee[1] + Math.sin(rSA) * 92]
+
+      const lLA = Math.PI / 2 + stride * 0.6
+      const lKnee = [hip[0] + Math.cos(lLA) * 105, hip[1] + Math.sin(lLA) * 105]
+      const lBehind = Math.max(0, stride)
+      const lFront = Math.max(0, -stride)
+      const lSA = lLA + (0.3 + lFront * 0.35) * (1 - lBehind) + (Math.PI - 1.1) * lBehind
+      const lFoot = [lKnee[0] + Math.cos(lSA) * 92, lKnee[1] + Math.sin(lSA) * 92]
+
+      // Torch arm (right) — forward, elbow ~90°, forearm vertical
+      const taA = -0.35 + stride * 0.1
+      const rElbow = [shoulder[0] + Math.cos(taA) * 72, shoulder[1] + Math.sin(taA) * 72]
+      const tfA = -Math.PI / 2 + stride * 0.06
+      const rHand = [rElbow[0] + Math.cos(tfA) * 62, rElbow[1] + Math.sin(tfA) * 62]
+
+      // Free arm (left) — strong pumping swing
+      const faA = Math.PI / 2 - stride * 0.65
+      const lElbow = [shoulder[0] + Math.cos(faA) * 70, shoulder[1] + Math.sin(faA) * 70]
+      const ffA = faA + 0.6 + Math.max(0, stride) * 0.6
+      const lHand = [lElbow[0] + Math.cos(ffA) * 55, lElbow[1] + Math.sin(ffA) * 55]
+
+      // Torch top
+      const torchA = -Math.PI / 2 + Math.sin(t) * 0.06
+      const torchTop = [rHand[0] + Math.cos(torchA) * 40, rHand[1] + Math.sin(torchA) * 40]
+
+      return { hip, shoulder, head, rKnee, rFoot, lKnee, lFoot, rElbow, rHand, lElbow, lHand, torchTop }
+    }
+
+    function limbSeg(ctx, p1, p2, t1, t2) {
+      const dx = p2[0] - p1[0], dy = p2[1] - p1[1]
+      const len = Math.sqrt(dx * dx + dy * dy) || 1
+      const nx = dy / len, ny = -dx / len
+      ctx.moveTo(p1[0] + nx * t1 / 2, p1[1] + ny * t1 / 2)
+      ctx.lineTo(p2[0] + nx * t2 / 2, p2[1] + ny * t2 / 2)
+      ctx.lineTo(p2[0] - nx * t2 / 2, p2[1] - ny * t2 / 2)
+      ctx.lineTo(p1[0] - nx * t1 / 2, p1[1] - ny * t1 / 2)
+      ctx.closePath()
+    }
+
+    function bodyPath(ctx, pose) {
+      ctx.beginPath()
+      ctx.arc(pose.head[0], pose.head[1], 38, 0, Math.PI * 2)
+      limbSeg(ctx, pose.shoulder, [pose.head[0], pose.head[1] + 34], 32, 28)
+      limbSeg(ctx, pose.shoulder, pose.hip, 78, 58)
+      limbSeg(ctx, pose.shoulder, pose.rElbow, 36, 30)
+      limbSeg(ctx, pose.rElbow, pose.rHand, 28, 22)
+      limbSeg(ctx, pose.rHand, pose.torchTop, 14, 12)
+      limbSeg(ctx, pose.shoulder, pose.lElbow, 36, 30)
+      limbSeg(ctx, pose.lElbow, pose.lHand, 28, 22)
+      limbSeg(ctx, pose.hip, pose.rKnee, 50, 42)
+      limbSeg(ctx, pose.rKnee, pose.rFoot, 38, 28)
+      limbSeg(ctx, pose.hip, pose.lKnee, 50, 42)
+      limbSeg(ctx, pose.lKnee, pose.lFoot, 38, 28)
+    }
+
+    function flamePath(ctx, torchTop, time) {
+      const t = time / 420
+      const cx = torchTop[0], cy = torchTop[1]
+      const f1 = Math.sin(t * 3.7) * 7 + Math.sin(t * 8.3) * 4
+      const f2 = Math.cos(t * 5.1) * 4 + Math.sin(t * 6.7) * 3
+      const w = 55 + Math.sin(t * 2.3) * 7
+      const h = 115 + Math.sin(t * 1.8) * 12
+
+      ctx.beginPath()
+      ctx.moveTo(cx + f1, cy - h)
+      ctx.bezierCurveTo(
+        cx + w * 0.25 + f2, cy - h * 0.65,
+        cx + w * 0.95, cy - h * 0.25,
+        cx + w * 0.45, cy
+      )
+      ctx.quadraticCurveTo(cx, cy + 3, cx - w * 0.45, cy)
+      ctx.bezierCurveTo(
+        cx - w * 0.95, cy - h * 0.25,
+        cx - w * 0.25 - f2, cy - h * 0.65,
+        cx + f1, cy - h
+      )
+    }
+
+    // --- Canvas setup ---
+
+    const canvas = document.getElementById('torch-canvas')
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = W * dpr; canvas.height = H * dpr
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px'
+    const ctx = canvas.getContext('2d')
+    ctx.scale(dpr, dpr)
+
+    let flameGlow = 0
+
+    function render(time) {
+      const pose = getPose(time)
+      const bodyScroll = (time / 1000 * BODY_PPS) % (bodyLines.length * BODY_LH)
+      const flameScroll = (time / 1000 * FLAME_PPS) % (flameLines.length * FLAME_LH)
+      if (flameGlow > 0.01) flameGlow *= 0.97
+
+      ctx.clearRect(0, 0, W, H)
+
+      // Faint body outline
+      ctx.save()
+      bodyPath(ctx, pose)
+      ctx.strokeStyle = 'rgba(255,209,102,0.05)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+      ctx.restore()
+
+      // Flame glow layers
+      ctx.save()
+      flamePath(ctx, pose.torchTop, time)
+      ctx.strokeStyle = `rgba(255,140,50,${0.09 + flameGlow * 0.15})`
+      ctx.lineWidth = 2
+      ctx.stroke()
+      ctx.fillStyle = `rgba(255,100,20,${0.025 + flameGlow * 0.06})`
+      ctx.fill()
+      ctx.restore()
+
+      // Body text
+      ctx.save()
+      bodyPath(ctx, pose)
+      ctx.clip()
+      ctx.font = BODY_FONT
+      ctx.textBaseline = 'top'
+      ctx.textAlign = 'center'
+      const bodyCX = (pose.shoulder[0] + pose.hip[0]) / 2
+      const bStart = Math.floor(bodyScroll / BODY_LH)
+      const bOff = bodyScroll % BODY_LH
+      const bVis = Math.ceil(H / BODY_LH) + 2
+      for (let i = -1; i < bVis; i++) {
+        const idx = (bStart + i) % bodyLines.length
+        if (idx < 0) continue
+        const y = i * BODY_LH - bOff
+        if (y < -BODY_LH || y > H + BODY_LH) continue
+        let a = 0.75
+        const fz = BODY_LH * 5
+        if (y < fz) a *= Math.max(0, y / fz)
+        if (y > H - fz) a *= Math.max(0, (H - y) / fz)
+        if (a < 0.02) continue
+        ctx.fillStyle = `rgba(255,209,102,${a})`
+        ctx.fillText(bodyLines[idx].text, bodyCX, y)
+      }
+      ctx.restore()
+
+      // Flame text
+      ctx.save()
+      flamePath(ctx, pose.torchTop, time)
+      ctx.clip()
+      ctx.font = FLAME_FONT
+      ctx.textBaseline = 'top'
+      ctx.textAlign = 'center'
+      ctx.shadowColor = `rgba(255,120,20,${0.35 + flameGlow * 0.4})`
+      ctx.shadowBlur = 5 + flameGlow * 10
+      const flameCX = pose.torchTop[0]
+      const flameBaseY = pose.torchTop[1]
+      const fStart = Math.floor(flameScroll / FLAME_LH)
+      const fOff = flameScroll % FLAME_LH
+      const fVis = Math.ceil(160 / FLAME_LH) + 2
+      for (let i = -1; i < fVis; i++) {
+        const idx = (fStart + i) % flameLines.length
+        if (idx < 0) continue
+        const y = flameBaseY - 120 + i * FLAME_LH - fOff
+        if (y < flameBaseY - 140 || y > flameBaseY + 20) continue
+        let a = 0.92 + flameGlow * 0.08
+        const top = flameBaseY - 120, bot = flameBaseY
+        const fzf = FLAME_LH * 2
+        if (y - top < fzf) a *= Math.max(0, (y - top) / fzf)
+        if (bot - y < fzf) a *= Math.max(0, (bot - y) / fzf)
+        if (a < 0.02) continue
+        const g = Math.round(220 + flameGlow * 35)
+        const b = Math.round(140 + flameGlow * 80)
+        ctx.fillStyle = `rgba(255,${g},${b},${Math.min(a, 1)})`
+        ctx.fillText(flameLines[idx].text, flameCX, y)
+      }
+      ctx.restore()
+
+      requestAnimationFrame(render)
+    }
+
+    requestAnimationFrame(render)
+
+    document.querySelector('.add-name-form').addEventListener('submit', (e) => {
+      e.preventDefault()
+      const input = e.target.querySelector('input')
+      const name = input.value.trim()
+      if (name) {
+        names.push(name)
+        flameLines = buildFlameLines()
+        input.value = ''
+        flameGlow = 1
+      }
+    })
+  </script>
+</body>
+</html>
