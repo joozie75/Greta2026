@@ -310,17 +310,38 @@
       ctx.fill()
       ctx.restore()
 
-      // Body text
+      // Body text — dim background pass (full canvas, no clip)
+      const bodyCX = (pose.shoulder[0] + pose.hip[0]) / 2
+      const bStart = Math.floor(bodyScroll / BODY_LH)
+      const bOff = bodyScroll % BODY_LH
+      const bVis = Math.ceil(H / BODY_LH) + 2
+
+      ctx.save()
+      ctx.font = BODY_FONT
+      ctx.textBaseline = 'top'
+      ctx.textAlign = 'center'
+      for (let i = -1; i < bVis; i++) {
+        const idx = (bStart + i) % bodyLines.length
+        if (idx < 0) continue
+        const y = i * BODY_LH - bOff
+        if (y < -BODY_LH || y > H + BODY_LH) continue
+        let a = 0.12
+        const fz = BODY_LH * 5
+        if (y < fz) a *= Math.max(0, y / fz)
+        if (y > H - fz) a *= Math.max(0, (H - y) / fz)
+        if (a < 0.01) continue
+        ctx.fillStyle = `rgba(255,209,102,${a})`
+        ctx.fillText(bodyLines[idx].text, bodyCX, y)
+      }
+      ctx.restore()
+
+      // Body text — bright pass (clipped to runner)
       ctx.save()
       bodyPath(ctx, pose)
       ctx.clip()
       ctx.font = BODY_FONT
       ctx.textBaseline = 'top'
       ctx.textAlign = 'center'
-      const bodyCX = (pose.shoulder[0] + pose.hip[0]) / 2
-      const bStart = Math.floor(bodyScroll / BODY_LH)
-      const bOff = bodyScroll % BODY_LH
-      const bVis = Math.ceil(H / BODY_LH) + 2
       for (let i = -1; i < bVis; i++) {
         const idx = (bStart + i) % bodyLines.length
         if (idx < 0) continue
